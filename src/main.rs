@@ -11,32 +11,52 @@ fn main() {
     println!("Input your number guess limit:");
 
     // raw user input
-    let mut input = String::new();
+    let mut guess_limit  = String::new();
 
     // read user input and put it into 'input'
     io::stdin()
-    .read_line(&mut input)
+    .read_line(&mut guess_limit)
     .expect("Failed to read");
 
-    // trim 'input' to remove newline
-    let input = input.trim();
+    // trim input to remove newline
+    let guess_limit = guess_limit.trim();
 
-    // print the 'input'
-    println!("You entered: {}",input);
+    // validate if input is a number
+    match guess_limit.parse::<i32>(){ // <expected_number_type>
+        Ok(number) => { // input is a number
+            let random_number_to_guess :i32 = rng.gen_range(1..number);
+            println!("Random number generated!");
+            println!("Input your guess between 1 to {}: ",random_number_to_guess);
+            let mut raw_user_guess = String::new();
 
-    // check if 'input' is number
-    match input.parse::<f64>(){
-        Ok(number) => {
-            println!("Input is a number: {}",number)
+            // prompt user guess 
+            io::stdin()
+            .read_line(&mut raw_user_guess)
+            .expect("Failed to read");
+
+            // trim input to remove newline
+            let raw_user_guess = raw_user_guess.trim(); 
+
+            // validate if input is a number
+            match raw_user_guess.parse::<i32>(){
+                Ok(number) => {
+                    if number == random_number_to_guess{
+                        println!("You guessed it!");
+                    } else {
+                        println!("Not quite, try again later.");
+                    }
+                }
+
+                Err(_) => {
+                      println!("Guess input has to be a number");
+                  }
+                
+            }
         }
-        Err(_) => {
-            println!("Input is not a number: {}",input)
+        Err(_) => { // input is not a number
+            println!("guess limit has to be a number");
         }
     }
-    
-    // generate a number between 1 to 'userInput'
-    let random_number: i32 = rng.gen_range(1..101); 
-    println!("\nRandom number: {}", random_number);
+   
     println!("\n=======================\n");
-
 }
