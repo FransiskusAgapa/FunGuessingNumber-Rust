@@ -2,51 +2,77 @@ use rand::Rng; // enable random generator
 use std::io;
 
 fn main() {
-    println!("\n== Number Guess Game ==\n");
+    println!("\n== Number Guess Game ==");
     /* 
     TODO
        -> add loop to keep asking if input is not valid 
        -> let user keep guessing until the guess is correct and give hint to go lower/higher
        -> finalize just by using 1 function to call inside main 'start_game()'
-    
     */
 
     // get raw/input as string
-    let raw_guess_limit = prompt_guess_limit();
+    let mut raw_guess_limit = prompt_guess_limit();
 
     // trim and validate whether input is a number 
-    let (is_guess_limit_number, guess_limit) = trim_validate_input(raw_guess_limit);
+    let (mut is_guess_limit_number, mut guess_limit) = trim_validate_input(raw_guess_limit);
 
-    if is_guess_limit_number {
-        // specify number to guess 
-        let num_to_guess: i32 = generate_random_number_guess(guess_limit);
+    // keep asking for valid input
+    while !is_guess_limit_number{
+        println!("\n C'mon, your guess limit has to be a number\n");
+        raw_guess_limit = prompt_guess_limit();
+        (is_guess_limit_number, guess_limit) = trim_validate_input(raw_guess_limit);
+    }
 
-        // prompt user to input a number guess 
-        let raw_user_guess = prompt_user_guess();
-        
-        // trim and validate user guess
-        let(is_user_guess_number, user_guess) = trim_validate_input(raw_user_guess);
+    // randomly generate number to guess 
+    let num_to_guess: i32 = generate_random_number_guess(guess_limit);
 
-        if is_user_guess_number{
-            if num_to_guess == user_guess {
-                println!("You got it!");
-            } else {
-                println!("Not quite, try again later. ");
-            }
-        } else {
-            println!("Your guess has to be a number between 1 to {}", guess_limit);
+     // prompt user to input a number guess 
+     let mut raw_user_guess = prompt_user_guess();
+
+     // trim and validate user guess
+     let (mut is_user_guess_number, mut user_guess) = trim_validate_input(raw_user_guess);
+
+     // keep asking for valid input as a guess
+     while !is_user_guess_number{
+         println!("\n C'mon, your guess has to be a number\n");
+         raw_user_guess = prompt_user_guess();
+         (is_user_guess_number, user_guess) = trim_validate_input(raw_user_guess);
+     }
+
+    while user_guess != num_to_guess{
+        if user_guess > num_to_guess {
+            println!("try lower");
+        } else if user_guess < num_to_guess {
+            println!("try higher");
+        } else if user_guess == num_to_guess {
+            break;
         }
-    } else {
-        println!("C'mon, your guess limit has to be a number");
+
+        // ask for new input 
+        raw_user_guess = prompt_user_guess();
+         (is_user_guess_number, user_guess) = trim_validate_input(raw_user_guess);
+
+        // keep asking for valid input 
+         while !is_user_guess_number{
+         println!("\n C'mon, your guess limit has to be a number\n");
+         raw_user_guess = prompt_user_guess();
+         (is_user_guess_number, user_guess) = trim_validate_input(raw_user_guess);
+     }
+    }
+    if user_guess == num_to_guess {
+        println!("You got it!");
     }
     println!("\n=======================\n");
 } 
 
 // prompt user to input 'guess_limit' then  return it
 fn prompt_guess_limit() -> String {
-    // prompt input for number guess limit
-    println!("Input your number guess limit:");
+    //let mut input_not_number = true
 
+    // prompt input for number guess limit
+    println!("\n> Input your number guess limit:");
+
+    //while input_not_number {}
     // user input raw / read as string
     let mut raw_guess_limit  = String::new();
 
@@ -70,7 +96,7 @@ fn trim_validate_input(string_input: String) -> (bool, i32) {
 // prompt user to input a guess number that's read as string
 fn prompt_user_guess() -> String {
     // prompt input for user guess
-    println!("Input your guess: ");
+    println!("\n> Input your guess: ");
 
     // read user guess as string 
     let mut raw_user_guess = String::new();
